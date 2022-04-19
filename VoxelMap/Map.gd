@@ -5,13 +5,17 @@ var chunk_prototype = preload("res://VoxelMap/Chunk.tscn");
 onready var chunks = $Chunks;
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
     var new_chunk = chunk_prototype.instance();
     chunks.add_child(new_chunk);
+    
+    # i think we will have Map.gd organize the chunks and keep track of all
+    # their origins. Chunk is dumb and just knows where it is
     new_chunk.initialize(Vector3.ZERO, 16)
-    new_chunk.add_voxel(3, 3, 3, Voxel.GRASS)
+    var voxel = new_chunk.add_voxel(Vector3(3,1,3), Voxel.GRASS)
+    
+    new_chunk.update_mesh()
+    
+    print("aww ya made this: ", voxel)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#    pass
+

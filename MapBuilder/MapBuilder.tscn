@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Combatant/Combatant.tscn" type="PackedScene" id=1]
 [ext_resource path="res://MapBuilder/MapBuilder.gd" type="Script" id=2]
 [ext_resource path="res://Combatant/Camera.tscn" type="PackedScene" id=3]
 [ext_resource path="res://VoxelMap/Map.tscn" type="PackedScene" id=5]
+
+[sub_resource type="CubeMesh" id=1]
 
 [node name="MapBuilder" type="Spatial"]
 script = ExtResource( 2 )
@@ -14,3 +16,8 @@ script = ExtResource( 2 )
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0017128, 0.00318837, 1.64509e-05 )
 
 [node name="Camera" parent="Player" instance=ExtResource( 3 )]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -2.29184, 0, 2.88529 )
+mesh = SubResource( 1 )
+material/0 = null

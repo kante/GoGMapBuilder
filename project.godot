@@ -32,8 +32,8 @@ config/icon="res://icon.png"
 
 [display]
 
-window/size/width=2885
-window/size/height=1572
+window/size/width=1025
+window/size/height=587
 
 [physics]
 

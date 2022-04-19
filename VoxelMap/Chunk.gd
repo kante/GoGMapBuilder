@@ -1,15 +1,19 @@
 extends Spatial
 
 
-# hold all created voxel types here
+# all voxel types contained in this chunk are stored here
 var voxels = null
+var origin = Vector3.ZERO
+var chunk_size = null
 
+# render mesh vertices and a copy of the mesh
 var mesh 
 var mesh_vertices
 var mesh_normals
 var mesh_indices
 var mesh_uvs
 
+# collision mesh vertices and a copy of the mesh
 var collision_mesh
 var collision_mesh_vertices
 var collision_mesh_indices
@@ -19,7 +23,13 @@ onready var collision_shape = get_node("StaticBody/CollisionShape");
 onready var st = SurfaceTool.new();
 
 
-func initialize(chunk_origin, chunk_size):
+func initialize(new_origin, new_chunk_size):
+    """Initialize voxels to chunk_size x chunk_size x chunk_size array
+        and set the origin of this chunk appropriately
+    """
+    origin = new_origin
+    chunk_size = new_chunk_size
+    
     voxels = []
     for x in range(0, chunk_size):
         voxels.append([])
@@ -28,21 +38,54 @@ func initialize(chunk_origin, chunk_size):
             for _z in range(0, chunk_size):
                 voxels[x][y].append(null)
             
-    global_transform.origin = chunk_origin
-
-
-func add_voxel(x, y, z, type):
-    """Add a voxel to this chunk at the specified coordinates"""
-    print("ya add one u bitch")
+    global_transform.origin = origin
     
 
-func create_mesh():
-    """create mesh u bum"""
+func contains(coords):
+    """Return true iff this chunk contains the specified Vector3 coords"""
+    if coords.x < origin.x or coords.x >= origin.x + chunk_size:
+        return false
+    if coords.y < origin.y or coords.y >= origin.y + chunk_size:
+        return false
+    if coords.z < origin.z or coords.z >= origin.z + chunk_size:
+        return false
+    
+    return true
+
+
+func add_voxel(coords, type):
+    """Add a voxel to this chunk at the specified Vector3 coordinates"""
+    if not contains(coords):
+        return null
+    
+    var idx = coords - origin
+    voxels[idx.x][idx.y][idx.z] = type
+    
+    return type
+   
+
+func update_mesh():
+    """Recreate the meshes for this chunk""" 
     mesh_vertices = [];
     mesh_normals = [];
     mesh_indices = [];
     mesh_uvs = [];
+    
+    collision_mesh_vertices = [];
+    collision_mesh_indices = [];
+    
+    create_render_mesh()
+    create_collision_mesh()
 
+
+func create_render_mesh():
+    """create mesh for rendering"""
+    
+    for x in range(0, chunk_size):
+        for y in range(0, chunk_size):
+            for z in range(0, chunk_size):
+                make_voxel(Vector3(x, y, z));
+    
     st.clear();
     st.begin(Mesh.PRIMITIVE_TRIANGLES);
     
@@ -62,10 +105,110 @@ func create_mesh():
     mesh_instance.mesh = mesh;
     
 
+
+func make_voxel(idx):
+    
+    var type = voxels[idx.x][idx.y][idx.z]
+    if type == null:
+        return
+            
+    var coords = idx + origin
+    
+    var idx_up = idx + Vector3.UP
+    if contains(idx_up):
+        var voxel_above = voxels[idx_up.x][idx_up.y][idx_up.z]
+        if voxel_above == null or Voxel.properties[voxel_above].transparent:
+            make_voxel_face_up(coords.x, coords.y, coords.z, type)
+    else:
+        make_voxel_face_up(coords.x, coords.y, coords.z, type)
+    
+    var idx_down = idx + Vector3.DOWN
+    if contains(idx_down):
+        var voxel_down = voxels[idx_down.x][idx_down.y][idx_down.z]
+        if voxel_down == null or Voxel.properties[voxel_down].transparent:
+            make_voxel_face_down(coords.x, coords.y, coords.z, type)
+    else:
+        make_voxel_face_down(coords.x, coords.y, coords.z, type)
+
+
+func make_voxel_face_up(x, y, z, type):
+    """Make the fucking face in the fucking direction...."""
+    var vertices = [ Vector3(x, y + Voxel.VOXEL_SIZE, z),
+                     Vector3(x + Voxel.VOXEL_SIZE, y + Voxel.VOXEL_SIZE, z),
+                     Vector3(x + Voxel.VOXEL_SIZE, y + Voxel.VOXEL_SIZE, z + Voxel.VOXEL_SIZE),
+                     Vector3(x, y + Voxel.VOXEL_SIZE, z + Voxel.VOXEL_SIZE) ]
+                    
+    make_voxel_face(vertices, Vector3.UP, type)
+
+
+func make_voxel_face_down(x, y, z, type):
+    """Make the voxel face in the down direction"""
+    var vertices = [ Vector3(x, y, z + Voxel.VOXEL_SIZE),
+                     Vector3(x + Voxel.VOXEL_SIZE, y, z + Voxel.VOXEL_SIZE),
+                     Vector3(x + Voxel.VOXEL_SIZE, y, z),
+                     Vector3(x, y, z),
+                   ]
+    make_voxel_face(vertices, Vector3.DOWN, type)
+
+
+
+func make_voxel_face_aaaa(x, y, z, type):
+    """Make the voxel face in the aaaa direction"""
+    var vertices = [ Vector3(x, y, z),
+                     Vector3(x, y, z),
+                     Vector3(x, y, z),
+                     Vector3(x, y, z),
+                   ]
+                    
+    make_voxel_face(vertices, Vector3.DOWN, type)
+    
+    
+      
+
+func make_voxel_face(vertices, normal, type):
+    """Make the voxel face with supplied vertices. Requires that vertices are supplied in clockwise
+    winding order when looking at the face from the side normal points towards."""
+    var is_solid = Voxel.properties[type].solid
+    
+    for v in vertices:
+        mesh_vertices.append(v)
+        mesh_normals.append(normal)
+        if is_solid:
+            collision_mesh_vertices.append(v)
+    
+    var uv_position = Voxel.properties[type][normal];
+    var v_texture_unit = Voxel.UV_MAP_UNIT;
+    mesh_uvs.append(Vector2( (v_texture_unit * uv_position.x), (v_texture_unit * uv_position.y) + v_texture_unit));
+    mesh_uvs.append(Vector2( (v_texture_unit * uv_position.x) + v_texture_unit, (v_texture_unit * uv_position.y) + v_texture_unit));
+    mesh_uvs.append(Vector2( (v_texture_unit * uv_position.x) + v_texture_unit, (v_texture_unit * uv_position.y)) );
+    mesh_uvs.append(Vector2( (v_texture_unit * uv_position.x), (v_texture_unit * uv_position.y) ));
+    
+    # Add the triangles to render_mesh_indices.
+    # NOTE: Like with the UV, the order is important!
+    # The indices tell the surface tool how to connect the vertices to make triangles.
+    mesh_indices.append(mesh_vertices.size() - 4);
+    mesh_indices.append(mesh_vertices.size() - 3);
+    mesh_indices.append(mesh_vertices.size() - 1);
+    mesh_indices.append(mesh_vertices.size() - 3);
+    mesh_indices.append(mesh_vertices.size() - 2);
+    mesh_indices.append(mesh_vertices.size() - 1);
+    
+    # Add the collision triangles, but only if the voxel is solid.
+    # Like with the other two, the order is important!
+    if is_solid:
+        collision_mesh_indices.append(mesh_vertices.size() - 4);
+        collision_mesh_indices.append(mesh_vertices.size() - 3);
+        collision_mesh_indices.append(mesh_vertices.size() - 1);
+        collision_mesh_indices.append(mesh_vertices.size() - 3);
+        collision_mesh_indices.append(mesh_vertices.size() - 2);
+        collision_mesh_indices.append(mesh_vertices.size() - 1);
+    
+    
+    
+        
+
 func create_collision_mesh():
     """Create the collision mesh u bum"""
-    collision_mesh_vertices = [];
-    collision_mesh_indices = [];
     
     st.clear();
     st.begin(Mesh.PRIMITIVE_TRIANGLES);
@@ -76,7 +219,7 @@ func create_collision_mesh():
     for i in range(0, collision_mesh_indices.size()):
         st.add_index(collision_mesh_indices[i]);
 
-    # now create a trimesh collision shape and set the CollisionShape appropriately
+    # create a trimesh collision shape and set the CollisionShape 
     collision_mesh = st.commit();
     collision_shape.shape = collision_mesh.create_trimesh_shape();
     
