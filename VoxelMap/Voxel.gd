@@ -18,6 +18,36 @@ const DIRT = 4
 const GRASS = 5
 
 
+# offset vectors used to add vertices to voxel meshes in clockwise winding order
+const offsets = {
+                    Vector3.UP     : [  Vector3(0, VOXEL_SIZE, 0),
+                                        Vector3(VOXEL_SIZE, VOXEL_SIZE, 0),
+                                        Vector3(VOXEL_SIZE, VOXEL_SIZE, VOXEL_SIZE),
+                                        Vector3(0, VOXEL_SIZE, VOXEL_SIZE)],
+                    Vector3.DOWN   : [  Vector3(0, 0, VOXEL_SIZE),
+                                        Vector3(VOXEL_SIZE, 0, VOXEL_SIZE),
+                                        Vector3(VOXEL_SIZE, 0, 0),
+                                        Vector3(0, 0, 0)], 
+                    Vector3.FORWARD: [  Vector3(0, 0, 0),
+                                        Vector3(VOXEL_SIZE, 0, 0),
+                                        Vector3(VOXEL_SIZE, VOXEL_SIZE, 0),
+                                        Vector3(0, VOXEL_SIZE, 0)], 
+                    Vector3.BACK   : [  Vector3(VOXEL_SIZE, 0, VOXEL_SIZE),
+                                        Vector3(0, 0, VOXEL_SIZE),
+                                        Vector3(0, VOXEL_SIZE, VOXEL_SIZE),
+                                        Vector3(VOXEL_SIZE, VOXEL_SIZE, VOXEL_SIZE)], 
+                    Vector3.LEFT   : [  Vector3(0, 0, VOXEL_SIZE),
+                                        Vector3(0, 0, 0),
+                                        Vector3(0, VOXEL_SIZE, 0),
+                                        Vector3(0, VOXEL_SIZE, VOXEL_SIZE)], 
+                    Vector3.RIGHT  : [  Vector3(VOXEL_SIZE, 0, 0),
+                                        Vector3(VOXEL_SIZE, 0, VOXEL_SIZE),
+                                        Vector3(VOXEL_SIZE, VOXEL_SIZE, VOXEL_SIZE),
+                                        Vector3(VOXEL_SIZE, VOXEL_SIZE, 0)]
+                    
+                }
+
+# properties required to define the uv map and render and collision meshes for a voxel
 const properties = {
                         STONE : {
                                     "transparent":false, 

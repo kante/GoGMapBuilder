@@ -114,67 +114,27 @@ func make_voxel(idx):
             
     var coords = idx + origin
     
-    var idx_up = idx + Vector3.UP
-    if contains(idx_up):
-        var voxel_above = voxels[idx_up.x][idx_up.y][idx_up.z]
-        if voxel_above == null or Voxel.properties[voxel_above].transparent:
-            make_voxel_face_up(coords.x, coords.y, coords.z, type)
-    else:
-        make_voxel_face_up(coords.x, coords.y, coords.z, type)
-    
-    var idx_down = idx + Vector3.DOWN
-    if contains(idx_down):
-        var voxel_down = voxels[idx_down.x][idx_down.y][idx_down.z]
-        if voxel_down == null or Voxel.properties[voxel_down].transparent:
-            make_voxel_face_down(coords.x, coords.y, coords.z, type)
-    else:
-        make_voxel_face_down(coords.x, coords.y, coords.z, type)
+    for normal in [Vector3.UP, Vector3.DOWN, Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT]:
+        var test_idx = idx + normal
+        if contains(test_idx):
+            var test_voxel = voxels[test_idx.x][test_idx.y][test_idx.z]
+            if test_voxel == null or Voxel.properties[test_voxel].transparent:
+                make_voxel_face(Voxel.offsets[normal], coords, normal, type)
+        else:
+            make_voxel_face(Voxel.offsets[normal], coords, normal, type)
 
 
-func make_voxel_face_up(x, y, z, type):
-    """Make the fucking face in the fucking direction...."""
-    var vertices = [ Vector3(x, y + Voxel.VOXEL_SIZE, z),
-                     Vector3(x + Voxel.VOXEL_SIZE, y + Voxel.VOXEL_SIZE, z),
-                     Vector3(x + Voxel.VOXEL_SIZE, y + Voxel.VOXEL_SIZE, z + Voxel.VOXEL_SIZE),
-                     Vector3(x, y + Voxel.VOXEL_SIZE, z + Voxel.VOXEL_SIZE) ]
-                    
-    make_voxel_face(vertices, Vector3.UP, type)
-
-
-func make_voxel_face_down(x, y, z, type):
-    """Make the voxel face in the down direction"""
-    var vertices = [ Vector3(x, y, z + Voxel.VOXEL_SIZE),
-                     Vector3(x + Voxel.VOXEL_SIZE, y, z + Voxel.VOXEL_SIZE),
-                     Vector3(x + Voxel.VOXEL_SIZE, y, z),
-                     Vector3(x, y, z),
-                   ]
-    make_voxel_face(vertices, Vector3.DOWN, type)
-
-
-
-func make_voxel_face_aaaa(x, y, z, type):
-    """Make the voxel face in the aaaa direction"""
-    var vertices = [ Vector3(x, y, z),
-                     Vector3(x, y, z),
-                     Vector3(x, y, z),
-                     Vector3(x, y, z),
-                   ]
-                    
-    make_voxel_face(vertices, Vector3.DOWN, type)
-    
-    
-      
-
-func make_voxel_face(vertices, normal, type):
+func make_voxel_face(offsets, coords, normal, type):
     """Make the voxel face with supplied vertices. Requires that vertices are supplied in clockwise
     winding order when looking at the face from the side normal points towards."""
     var is_solid = Voxel.properties[type].solid
     
-    for v in vertices:
-        mesh_vertices.append(v)
+    for offset in offsets:
+        var vertex = coords + offset
+        mesh_vertices.append(vertex)
         mesh_normals.append(normal)
         if is_solid:
-            collision_mesh_vertices.append(v)
+            collision_mesh_vertices.append(vertex)
     
     var uv_position = Voxel.properties[type][normal];
     var v_texture_unit = Voxel.UV_MAP_UNIT;
@@ -202,10 +162,7 @@ func make_voxel_face(vertices, normal, type):
         collision_mesh_indices.append(mesh_vertices.size() - 3);
         collision_mesh_indices.append(mesh_vertices.size() - 2);
         collision_mesh_indices.append(mesh_vertices.size() - 1);
-    
-    
-    
-        
+
 
 func create_collision_mesh():
     """Create the collision mesh u bum"""

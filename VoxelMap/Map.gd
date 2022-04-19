@@ -13,9 +13,10 @@ func _ready():
     # their origins. Chunk is dumb and just knows where it is
     new_chunk.initialize(Vector3.ZERO, 16)
     var voxel = new_chunk.add_voxel(Vector3(3,1,3), Voxel.GRASS)
+    voxel = new_chunk.add_voxel(Vector3(2,1,2), Voxel.GRASS)
+    voxel = new_chunk.add_voxel(Vector3(1,1,1), Voxel.GRASS)
     
     new_chunk.update_mesh()
     
-    print("aww ya made this: ", voxel)
 
 
