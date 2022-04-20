@@ -18,7 +18,7 @@ dest_files=[ "res://.import/albedo_tileset.png-acfed6b599376c724885b0d06895023b.
 
 compress/mode=2
 compress/lossy_quality=0.7
-compress/hdr_mode=0
+compress/hdr_mode=1
 compress/bptc_ldr=0
 compress/normal_map=1
 flags/repeat=true

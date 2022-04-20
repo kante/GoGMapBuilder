@@ -116,12 +116,12 @@ func make_voxel(idx):
     
     for normal in [Vector3.UP, Vector3.DOWN, Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT]:
         var test_idx = idx + normal
-        if contains(test_idx):
+        if contains(origin + test_idx):
             var test_voxel = voxels[test_idx.x][test_idx.y][test_idx.z]
             if test_voxel == null or Voxel.properties[test_voxel].transparent:
-                make_voxel_face(Voxel.offsets[normal], coords, normal, type)
+                make_voxel_face(Voxel.offsets[normal], idx, normal, type)
         else:
-            make_voxel_face(Voxel.offsets[normal], coords, normal, type)
+            make_voxel_face(Voxel.offsets[normal], idx, normal, type)
 
 
 func make_voxel_face(offsets, coords, normal, type):
