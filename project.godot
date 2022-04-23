@@ -17,7 +17,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "Voxel",
 "language": "GDScript",
-"path": "res://VoxelMap/Voxel.gd"
+"path": "res://Map/Voxel.gd"
 } ]
 _global_script_class_icons={
 "CombatInputUI": "",

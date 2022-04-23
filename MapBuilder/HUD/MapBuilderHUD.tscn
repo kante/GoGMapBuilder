@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://MapBuilder/HUD/MapBuilderHUD.gd" type="Script" id=1]
-[ext_resource path="res://VoxelMap/assets/albedo_tileset.png" type="Texture" id=2]
+[ext_resource path="res://Map/assets/albedo_tileset.png" type="Texture" id=2]
 [ext_resource path="res://MapBuilder/HUD/VoxelSelectButton.gd" type="Script" id=3]
 [ext_resource path="res://MapBuilder/HUD/assets/button.png" type="Texture" id=4]
 [ext_resource path="res://MapBuilder/HUD/assets/button_pressed.png" type="Texture" id=5]

@@ -17,17 +17,57 @@ func _unhandled_input(event):
 # Called when the node enters the scene tree for the first time.
 func _ready():
     camera.follow_combatant(player)
-    map.click_delegate = self
+
+    # build a really basic starting map and initialize it TODO: saving and loading maps!
+    var chunk_size = 16
+    var voxel_map = build_starting_terrain_map(10, 10, chunk_size)
+    map.initialize_map(self, chunk_size, voxel_map)
+      
+
+func build_starting_terrain_map(num_chunks_x, num_chunks_z, chunk_size):
+    """Return a 3D array map with a flat plane of grass->dirt->cobble->stone->bedrock"""
+    var new_map = {}
+    var chunk_voxels = build_starting_chunk_voxels(chunk_size)
+    
+    for i in range(-num_chunks_x/2, num_chunks_x/2):
+        for j in range(-num_chunks_z/2, num_chunks_z/2):
+            var chunk_index = Vector3(i, -1, j)
+            new_map[chunk_index] = chunk_voxels.duplicate(true)
+    
+    return new_map
+
+
+func build_starting_chunk_voxels(chunk_size):
+    var chunk_voxels = []
+    for x in range(0, chunk_size):
+        chunk_voxels.append([])
+        for y in range(0, chunk_size):
+            chunk_voxels[x].append([])
+            for _z in range(0, chunk_size):
+                if y == chunk_size - 1:
+                        chunk_voxels[x][y].append(Voxel.GRASS)
+                elif y in [chunk_size-2, chunk_size-3, chunk_size-4]:
+                        chunk_voxels[x][y].append(Voxel.DIRT)
+                elif y == chunk_size - 5:
+                        chunk_voxels[x][y].append(Voxel.COBBLE)
+                elif y == chunk_size - 6:
+                        chunk_voxels[x][y].append(Voxel.STONE)
+                elif y == chunk_size - 7:
+                        chunk_voxels[x][y].append(Voxel.BEDROCK)
+                else:
+                        chunk_voxels[x][y].append(null)
+    return chunk_voxels
+                
+                
 
 
 func on_map_click(coords, normal):
     """map.click_delegate method
-        TODO: think about whether or not all this stuff should go through input_ui, possibly extended/refactored ui class?
         Create a new voxel in this map at the specified coords!
+        
+        TODO: should this stuff should go through input_ui or an extended/refactored ui class?
     """    
     var voxel = map.add_voxel(coords + normal, hud.voxel_type)
-
-    
 
 
 

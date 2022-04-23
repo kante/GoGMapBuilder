@@ -11,7 +11,7 @@ const TILE_SIZE = 32
 const UV_MAP_UNIT = 1.0 / (TEXTURE_SIZE / TILE_SIZE)
 
 # All the voxel types we have implemented
-enum {STONE, BEDROCK, COBBLE, DIRT, GRASS}
+enum {GRASS, DIRT, COBBLE, STONE, BEDROCK}
 
 
 # offset vectors used to add vertices to voxel meshes in clockwise winding order

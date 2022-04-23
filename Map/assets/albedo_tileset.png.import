@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/albedo_tileset.png-acfed6b599376c724885b0d06895023b.s3tc.stex"
-path.etc="res://.import/albedo_tileset.png-acfed6b599376c724885b0d06895023b.etc.stex"
+path.s3tc="res://.import/albedo_tileset.png-1fd2a3096540870c081348f49accf918.s3tc.stex"
+path.etc="res://.import/albedo_tileset.png-1fd2a3096540870c081348f49accf918.etc.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://VoxelMap/assets/albedo_tileset.png"
-dest_files=[ "res://.import/albedo_tileset.png-acfed6b599376c724885b0d06895023b.s3tc.stex", "res://.import/albedo_tileset.png-acfed6b599376c724885b0d06895023b.etc.stex" ]
+source_file="res://Map/assets/albedo_tileset.png"
+dest_files=[ "res://.import/albedo_tileset.png-1fd2a3096540870c081348f49accf918.s3tc.stex", "res://.import/albedo_tileset.png-1fd2a3096540870c081348f49accf918.etc.stex" ]
 
 [params]
 

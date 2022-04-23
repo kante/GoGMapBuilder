@@ -2,8 +2,8 @@
 
 importer="texture"
 type="StreamTexture"
-path.s3tc="res://.import/normal_tileset.png-fc17727f7c93b876947adab3302f077d.s3tc.stex"
-path.etc="res://.import/normal_tileset.png-fc17727f7c93b876947adab3302f077d.etc.stex"
+path.s3tc="res://.import/normal_tileset.png-9b47300590c056170166e159e32b1022.s3tc.stex"
+path.etc="res://.import/normal_tileset.png-9b47300590c056170166e159e32b1022.etc.stex"
 metadata={
 "imported_formats": [ "s3tc", "etc" ],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://VoxelMap/assets/normal_tileset.png"
-dest_files=[ "res://.import/normal_tileset.png-fc17727f7c93b876947adab3302f077d.s3tc.stex", "res://.import/normal_tileset.png-fc17727f7c93b876947adab3302f077d.etc.stex" ]
+source_file="res://Map/assets/normal_tileset.png"
+dest_files=[ "res://.import/normal_tileset.png-9b47300590c056170166e159e32b1022.s3tc.stex", "res://.import/normal_tileset.png-9b47300590c056170166e159e32b1022.etc.stex" ]
 
 [params]
 

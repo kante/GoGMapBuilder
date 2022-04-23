@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://VoxelMap/Chunk.gd" type="Script" id=1]
-[ext_resource path="res://VoxelMap/assets/normal_tileset.png" type="Texture" id=2]
-[ext_resource path="res://VoxelMap/assets/albedo_tileset.png" type="Texture" id=3]
+[ext_resource path="res://Map/Chunk.gd" type="Script" id=1]
+[ext_resource path="res://Map/assets/normal_tileset.png" type="Texture" id=2]
+[ext_resource path="res://Map/assets/albedo_tileset.png" type="Texture" id=3]
 
 [sub_resource type="SpatialMaterial" id=1]
 albedo_texture = ExtResource( 3 )
