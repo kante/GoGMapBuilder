@@ -2,20 +2,16 @@ extends Node
 
 class_name Voxel
 
-
+# The size of each voxel in 3D world coordinates
 const VOXEL_SIZE = 1
 
-
+# The size of the texture and each sub tile to place on the Voxel mesh
 const TEXTURE_SIZE = 96
 const TILE_SIZE = 32
 const UV_MAP_UNIT = 1.0 / (TEXTURE_SIZE / TILE_SIZE)
 
-
-const STONE = 1
-const BEDROCK = 2
-const COBBLE = 3
-const DIRT = 4
-const GRASS = 5
+# All the voxel types we have implemented
+enum {STONE, BEDROCK, COBBLE, DIRT, GRASS}
 
 
 # offset vectors used to add vertices to voxel meshes in clockwise winding order
@@ -44,8 +40,8 @@ const offsets = {
                                         Vector3(VOXEL_SIZE, 0, VOXEL_SIZE),
                                         Vector3(VOXEL_SIZE, VOXEL_SIZE, VOXEL_SIZE),
                                         Vector3(VOXEL_SIZE, VOXEL_SIZE, 0)]
-                    
                 }
+
 
 # properties required to define the uv map and render and collision meshes for a voxel
 const properties = {

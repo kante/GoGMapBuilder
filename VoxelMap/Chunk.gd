@@ -1,5 +1,7 @@
 extends Spatial
 
+# the Map this Chunk is a part of
+var map = null
 
 # all voxel types contained in this chunk are stored here
 var voxels = null
@@ -23,10 +25,11 @@ onready var collision_shape = get_node("StaticBody/CollisionShape");
 onready var st = SurfaceTool.new();
 
 
-func initialize(new_origin, new_chunk_size):
+func initialize(new_map, new_origin, new_chunk_size):
     """Initialize voxels to chunk_size x chunk_size x chunk_size array
         and set the origin of this chunk appropriately
     """
+    map = new_map
     origin = new_origin
     chunk_size = new_chunk_size
     
@@ -105,14 +108,11 @@ func create_render_mesh():
     mesh_instance.mesh = mesh;
     
 
-
 func make_voxel(idx):
     
     var type = voxels[idx.x][idx.y][idx.z]
     if type == null:
         return
-            
-    var coords = idx + origin
     
     for normal in [Vector3.UP, Vector3.DOWN, Vector3.FORWARD, Vector3.BACK, Vector3.LEFT, Vector3.RIGHT]:
         var test_idx = idx + normal
@@ -181,3 +181,10 @@ func create_collision_mesh():
     collision_shape.shape = collision_mesh.create_trimesh_shape();
     
 
+func _on_StaticBody_input_event(_camera, event, position, normal, _shape_idx):
+    """Call the map click delegate's on_map_click method, if it's set."""
+    if event is InputEventMouseButton:
+        if event.button_index == BUTTON_LEFT and event.pressed:
+            if map and map.click_delegate:
+                var coords = (position - 0.5*normal).floor()
+                map.click_delegate.on_map_click(coords, normal)
