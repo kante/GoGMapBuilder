@@ -5,6 +5,7 @@ extends TextureButton
 var hud = null
 var voxel_type = null
 onready var sprite = $Sprite
+onready var label = $Label
 
 
 func _on_VoxelSelectButton_pressed():

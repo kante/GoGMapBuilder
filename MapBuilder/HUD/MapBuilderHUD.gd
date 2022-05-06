@@ -5,9 +5,9 @@ var voxel_type = Voxel.STONE
 onready var button_prototype = $HBoxContainer/VoxelSelectButton
 onready var button_container = $HBoxContainer
 
-# Called when the node enters the scene tree for the first time.
+
 func _ready():
-    
+    """Just initializes the voxel selection buttons for now."""
     for type in Voxel.properties:
         var properties = Voxel.properties[type]
         var new_button = button_prototype.duplicate()
@@ -18,15 +18,16 @@ func _ready():
         
         new_button.sprite.region_rect = Rect2(properties[Vector3.UP]*Voxel.TILE_SIZE, 
                                               Vector2.ONE*Voxel.TILE_SIZE)    
+        new_button.label.text = properties.name
+        
         if type == voxel_type:
             new_button.pressed = true
     
     button_prototype.visible = false
         
         
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
+    """FPS label text update."""
     $FPSLabel.text = "FPS: %d  " % Engine.get_frames_per_second()
 
 

@@ -54,6 +54,19 @@ texture_pressed = ExtResource( 5 )
 expand = true
 script = ExtResource( 3 )
 
+[node name="Label" type="Label" parent="HBoxContainer/VoxelSelectButton"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_left = -25.5
+margin_top = -14.0
+margin_right = 25.5
+text = "Stone"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="Sprite" type="Sprite" parent="HBoxContainer/VoxelSelectButton"]
 texture = ExtResource( 2 )
 centered = false

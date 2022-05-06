@@ -6,8 +6,8 @@ class_name Voxel
 const VOXEL_SIZE = 1
 
 # The size of the texture and each sub tile to place on the Voxel mesh
-const TEXTURE_SIZE = 96
-const TILE_SIZE = 32
+const TEXTURE_SIZE = 3072
+const TILE_SIZE = 1024
 const UV_MAP_UNIT = 1.0 / (TEXTURE_SIZE / TILE_SIZE)
 
 # All the voxel types we have implemented
@@ -46,6 +46,7 @@ const offsets = {
 # properties required to define the uv map and render and collision meshes for a voxel
 const properties = {
                         STONE : {
+                                    "name" : "stone",
                                     "transparent":false, 
                                     "solid":true,
                                     Vector3.UP:Vector2(0, 0),
@@ -56,6 +57,7 @@ const properties = {
                                     Vector3.RIGHT:Vector2(0, 0)
                                 },
                         BEDROCK : {
+                                    "name" : "bedrock",
                                     "transparent":false, 
                                     "solid":true,
                                     Vector3.UP:Vector2(2, 0),
@@ -66,6 +68,7 @@ const properties = {
                                     Vector3.RIGHT:Vector2(2, 0)
                                 },
                         COBBLE : {
+                                    "name" : "cobble",
                                     "transparent":false, 
                                     "solid":true,
                                     Vector3.UP:Vector2(1, 0),
@@ -76,6 +79,7 @@ const properties = {
                                     Vector3.RIGHT:Vector2(1, 0)
                                 },
                         DIRT : {
+                                    "name" : "dirt",
                                     "transparent":false, 
                                     "solid":true,
                                     Vector3.UP:Vector2(0, 1),
@@ -86,6 +90,7 @@ const properties = {
                                     Vector3.RIGHT:Vector2(0, 1)
                                 },
                         GRASS : {
+                                    "name" : "grass",
                                     "transparent":false, 
                                     "solid":true,
                                     Vector3.UP:Vector2(2, 1),
