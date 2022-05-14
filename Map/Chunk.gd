@@ -40,8 +40,8 @@ func initialize(new_map, new_origin, new_chunk_size):
             voxels[x].append([])
             for _z in range(0, chunk_size):
                 voxels[x][y].append(null)
-            
-    global_transform.origin = origin
+    
+    global_transform.origin = origin 
     
 
 func contains(coords):
@@ -136,12 +136,13 @@ func make_voxel_face(offsets, coords, normal, type):
         if is_solid:
             collision_mesh_vertices.append(vertex)
     
-    var uv_position = Voxel.properties[type][normal];
-    var v_texture_unit = Voxel.UV_MAP_UNIT;
-    mesh_uvs.append(Vector2( (v_texture_unit * uv_position.x), (v_texture_unit * uv_position.y) + v_texture_unit));
-    mesh_uvs.append(Vector2( (v_texture_unit * uv_position.x) + v_texture_unit, (v_texture_unit * uv_position.y) + v_texture_unit));
-    mesh_uvs.append(Vector2( (v_texture_unit * uv_position.x) + v_texture_unit, (v_texture_unit * uv_position.y)) );
-    mesh_uvs.append(Vector2( (v_texture_unit * uv_position.x), (v_texture_unit * uv_position.y) ));
+    var uv_position = Voxel.properties[type][normal]
+    var base_uv = Voxel.UV_TILE_UNIT * uv_position + Voxel.UV_TILE_MARGIN * Vector2.ONE
+    mesh_uvs.append(base_uv + Vector2(0, Voxel.UV_MAP_UNIT));
+    mesh_uvs.append(base_uv + Vector2(Voxel.UV_MAP_UNIT, Voxel.UV_MAP_UNIT))
+    mesh_uvs.append(base_uv + Vector2(Voxel.UV_MAP_UNIT, 0));
+    mesh_uvs.append(base_uv);
+
     
     # Add the triangles to render_mesh_indices.
     # NOTE: Like with the UV, the order is important!

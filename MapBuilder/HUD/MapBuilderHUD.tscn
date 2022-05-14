@@ -1,10 +1,6 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://MapBuilder/HUD/MapBuilderHUD.gd" type="Script" id=1]
-[ext_resource path="res://Map/assets/albedo_tileset.png" type="Texture" id=2]
-[ext_resource path="res://MapBuilder/HUD/VoxelSelectButton.gd" type="Script" id=3]
-[ext_resource path="res://MapBuilder/HUD/assets/button.png" type="Texture" id=4]
-[ext_resource path="res://MapBuilder/HUD/assets/button_pressed.png" type="Texture" id=5]
 
 [node name="MapBuilderHUD" type="Control"]
 anchor_right = 1.0
@@ -29,49 +25,13 @@ __meta__ = {
 }
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-anchor_left = 0.5
 anchor_top = 1.0
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = -196.5
-margin_top = -76.0
-margin_right = 197.5
-margin_bottom = -19.0
+margin_left = 74.0
+margin_top = -123.0
+margin_right = -84.0
 alignment = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="VoxelSelectButton" type="TextureButton" parent="HBoxContainer"]
-margin_left = 168.0
-margin_right = 225.0
-margin_bottom = 57.0
-rect_min_size = Vector2( 57, 57 )
-toggle_mode = true
-keep_pressed_outside = true
-texture_normal = ExtResource( 4 )
-texture_pressed = ExtResource( 5 )
-expand = true
-script = ExtResource( 3 )
-
-[node name="Label" type="Label" parent="HBoxContainer/VoxelSelectButton"]
-anchor_left = 0.5
-anchor_right = 0.5
-margin_left = -25.5
-margin_top = -14.0
-margin_right = 25.5
-text = "Stone"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Sprite" type="Sprite" parent="HBoxContainer/VoxelSelectButton"]
-texture = ExtResource( 2 )
-centered = false
-offset = Vector2( 12, 12 )
-region_enabled = true
-region_rect = Rect2( 0, 0, 32, 32 )
-
-[connection signal="pressed" from="HBoxContainer/VoxelSelectButton" to="HBoxContainer/VoxelSelectButton" method="_on_VoxelSelectButton_pressed"]
