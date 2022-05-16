@@ -8,20 +8,25 @@ var voxels = null
 var origin = Vector3.ZERO
 var chunk_size = null
 
-# render mesh vertices and a copy of the mesh
-var mesh 
-var mesh_vertices
-var mesh_normals
-var mesh_indices
-var mesh_uvs
+# render mesh vertices, uvs, indices, normals for each face type
+var mesh_data
 
 # collision mesh vertices and a copy of the mesh
 var collision_mesh
 var collision_mesh_vertices
 var collision_mesh_indices
 
-onready var mesh_instance = get_node("MeshInstance");
-onready var collision_shape = get_node("StaticBody/CollisionShape");
+
+onready var meshes = {
+                        Vector2(0, 0) : $StoneMeshInstance, #stone
+                        Vector2(2, 0) : $BedrockMeshInstance, #bedrock
+                        Vector2(1, 0) : $CobbleMeshInstance, #cobble
+                        Vector2(0, 1) : $DirtMeshInstance, #dirt
+                        Vector2(2, 1) : $GrassTopMeshInstance, #grass_top
+                        Vector2(1, 1) : $GrassSideMeshInstance, #grass_side
+                    }
+
+onready var collision_shape = $StaticBody/CollisionShape
 onready var st = SurfaceTool.new();
 
 
@@ -69,13 +74,20 @@ func add_voxel(coords, type):
 
 func update_mesh():
     """Recreate the meshes for this chunk""" 
-    mesh_vertices = [];
-    mesh_normals = [];
-    mesh_indices = [];
-    mesh_uvs = [];
     
-    collision_mesh_vertices = [];
-    collision_mesh_indices = [];
+    # will need to key this by a constant GRASS_TOP, GRASS_SIDE, etc...
+    mesh_data = {
+                    Vector2(0, 0) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #stone
+                    Vector2(2, 0) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #bedrock
+                    Vector2(1, 0) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #cobble
+                    Vector2(0, 1) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #dirt
+                    Vector2(2, 1) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #grass_top
+                    Vector2(1, 1) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #grass_side
+                }
+    
+    
+    collision_mesh_vertices = []
+    collision_mesh_indices = []
     
     create_render_mesh()
     create_collision_mesh()
@@ -87,26 +99,28 @@ func create_render_mesh():
     for x in range(0, chunk_size):
         for y in range(0, chunk_size):
             for z in range(0, chunk_size):
-                make_voxel(Vector3(x, y, z));
+                make_voxel(Vector3(x, y, z))
     
-    st.clear();
-    st.begin(Mesh.PRIMITIVE_TRIANGLES);
+    for face_type in mesh_data:
+        var data = mesh_data[face_type]
+        
+        st.clear();
+        st.begin(Mesh.PRIMITIVE_TRIANGLES);
     
-    # add normal, uv and vertices in that order.
-    for i in range(0, mesh_vertices.size()):
-        st.add_normal(mesh_normals[i]);
-        st.add_uv(mesh_uvs[i]);
-        st.add_vertex(mesh_vertices[i]);
-    
-    # Now add indices and generate tangents.
-    for i in range(0, mesh_indices.size()):
-        st.add_index(mesh_indices[i]);    
-    st.generate_tangents();
-    
-    # Now create the mesh and update MeshInstance
-    mesh = st.commit();
-    mesh_instance.mesh = mesh;
-    
+        # add normal, uv and vertices in that order.
+        for i in range(0, data.vertices.size()):
+            st.add_normal(data.normals[i])
+            st.add_uv(data.uvs[i])
+            st.add_vertex(data.vertices[i])
+        
+        # Now add indices and generate tangents.
+        for i in range(0, data.indices.size()):
+            st.add_index(data.indices[i])  
+        st.generate_tangents()
+        
+        # Now create the mesh and update MeshInstance
+        meshes[face_type].mesh = st.commit()
+
 
 func make_voxel(idx):
     
@@ -129,40 +143,48 @@ func make_voxel_face(offsets, coords, normal, type):
     winding order when looking at the face from the side normal points towards."""
     var is_solid = Voxel.properties[type].solid
     
+    # TODO: make this a constant, GRASS_TOP, GRASS_SIDE, DIRT, etc...
+    var face_type = Voxel.properties[type][normal] # need to make this a constant 
+
+    
     for offset in offsets:
         var vertex = coords + offset
-        mesh_vertices.append(vertex)
-        mesh_normals.append(normal)
+        mesh_data[face_type].vertices.append(vertex)
+        #mesh_vertices.append(vertex)
+        mesh_data[face_type].normals.append(normal)
+        #mesh_normals.append(normal)
         if is_solid:
             collision_mesh_vertices.append(vertex)
     
-    var uv_position = Voxel.properties[type][normal]
-    var base_uv = Voxel.UV_TILE_UNIT * uv_position + Voxel.UV_TILE_MARGIN * Vector2.ONE
-    mesh_uvs.append(base_uv + Vector2(0, Voxel.UV_MAP_UNIT));
-    mesh_uvs.append(base_uv + Vector2(Voxel.UV_MAP_UNIT, Voxel.UV_MAP_UNIT))
-    mesh_uvs.append(base_uv + Vector2(Voxel.UV_MAP_UNIT, 0));
-    mesh_uvs.append(base_uv);
+    mesh_data[face_type].uvs.append(Vector2(0, 1))
+    mesh_data[face_type].uvs.append(Vector2(1, 1))
+    mesh_data[face_type].uvs.append(Vector2(1, 0))
+    mesh_data[face_type].uvs.append(Vector2(0, 0))
+    
+    
+    
 
     
     # Add the triangles to render_mesh_indices.
     # NOTE: Like with the UV, the order is important!
     # The indices tell the surface tool how to connect the vertices to make triangles.
-    mesh_indices.append(mesh_vertices.size() - 4);
-    mesh_indices.append(mesh_vertices.size() - 3);
-    mesh_indices.append(mesh_vertices.size() - 1);
-    mesh_indices.append(mesh_vertices.size() - 3);
-    mesh_indices.append(mesh_vertices.size() - 2);
-    mesh_indices.append(mesh_vertices.size() - 1);
+    var num_vertices = mesh_data[face_type].vertices.size()
+    mesh_data[face_type].indices.append(num_vertices - 4)
+    mesh_data[face_type].indices.append(num_vertices - 3)
+    mesh_data[face_type].indices.append(num_vertices - 1)
+    mesh_data[face_type].indices.append(num_vertices - 3)
+    mesh_data[face_type].indices.append(num_vertices - 2)
+    mesh_data[face_type].indices.append(num_vertices - 1)
     
     # Add the collision triangles, but only if the voxel is solid.
     # Like with the other two, the order is important!
     if is_solid:
-        collision_mesh_indices.append(mesh_vertices.size() - 4);
-        collision_mesh_indices.append(mesh_vertices.size() - 3);
-        collision_mesh_indices.append(mesh_vertices.size() - 1);
-        collision_mesh_indices.append(mesh_vertices.size() - 3);
-        collision_mesh_indices.append(mesh_vertices.size() - 2);
-        collision_mesh_indices.append(mesh_vertices.size() - 1);
+        collision_mesh_indices.append(collision_mesh_vertices.size() - 4)
+        collision_mesh_indices.append(collision_mesh_vertices.size() - 3)
+        collision_mesh_indices.append(collision_mesh_vertices.size() - 1)
+        collision_mesh_indices.append(collision_mesh_vertices.size() - 3)
+        collision_mesh_indices.append(collision_mesh_vertices.size() - 2)
+        collision_mesh_indices.append(collision_mesh_vertices.size() - 1)
 
 
 func create_collision_mesh():
