@@ -12,19 +12,14 @@ var chunk_size = null
 var mesh_data
 
 # collision mesh vertices and a copy of the mesh
-var collision_mesh
 var collision_mesh_vertices
 var collision_mesh_indices
 
-
-onready var meshes = {
-                        Vector2(0, 0) : $StoneMeshInstance, #stone
-                        Vector2(2, 0) : $BedrockMeshInstance, #bedrock
-                        Vector2(1, 0) : $CobbleMeshInstance, #cobble
-                        Vector2(0, 1) : $DirtMeshInstance, #dirt
-                        Vector2(2, 1) : $GrassTopMeshInstance, #grass_top
-                        Vector2(1, 1) : $GrassSideMeshInstance, #grass_side
-                    }
+onready var meshes = { 
+                        Voxel.STONE_FACE:$StoneMeshInstance, Voxel.BEDROCK_FACE:$BedrockMeshInstance, 
+                        Voxel.COBBLE_FACE:$CobbleMeshInstance, Voxel.DIRT_FACE:$DirtMeshInstance, 
+                        Voxel.GRASS_TOP_FACE:$GrassTopMeshInstance, Voxel.GRASS_SIDE_FACE:$GrassSideMeshInstance
+                      }
 
 onready var collision_shape = $StaticBody/CollisionShape
 onready var st = SurfaceTool.new();
@@ -73,19 +68,15 @@ func add_voxel(coords, type):
    
 
 func update_mesh():
-    """Recreate the meshes for this chunk""" 
-    
-    # will need to key this by a constant GRASS_TOP, GRASS_SIDE, etc...
+    """Recreate the meshes for this chunk.""" 
     mesh_data = {
-                    Vector2(0, 0) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #stone
-                    Vector2(2, 0) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #bedrock
-                    Vector2(1, 0) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #cobble
-                    Vector2(0, 1) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #dirt
-                    Vector2(2, 1) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #grass_top
-                    Vector2(1, 1) : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, #grass_side
+                    Voxel.STONE_FACE      : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, 
+                    Voxel.BEDROCK_FACE    : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, 
+                    Voxel.COBBLE_FACE     : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, 
+                    Voxel.DIRT_FACE       : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, 
+                    Voxel.GRASS_TOP_FACE  : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, 
+                    Voxel.GRASS_SIDE_FACE : {"vertices":[], "normals":[], "indices":[], "uvs":[]}, 
                 }
-    
-    
     collision_mesh_vertices = []
     collision_mesh_indices = []
     
@@ -116,9 +107,8 @@ func create_render_mesh():
         # Now add indices and generate tangents.
         for i in range(0, data.indices.size()):
             st.add_index(data.indices[i])  
-        st.generate_tangents()
         
-        # Now create the mesh and update MeshInstance
+        # Now create the mesh and update the MeshInstace for each type of face
         meshes[face_type].mesh = st.commit()
 
 
@@ -143,31 +133,21 @@ func make_voxel_face(offsets, coords, normal, type):
     winding order when looking at the face from the side normal points towards."""
     var is_solid = Voxel.properties[type].solid
     
-    # TODO: make this a constant, GRASS_TOP, GRASS_SIDE, DIRT, etc...
-    var face_type = Voxel.properties[type][normal] # need to make this a constant 
-
-    
+    var face_type = Voxel.properties[type][normal] 
     for offset in offsets:
         var vertex = coords + offset
         mesh_data[face_type].vertices.append(vertex)
-        #mesh_vertices.append(vertex)
         mesh_data[face_type].normals.append(normal)
-        #mesh_normals.append(normal)
         if is_solid:
             collision_mesh_vertices.append(vertex)
     
+    # add UV coordinates for the vertices
     mesh_data[face_type].uvs.append(Vector2(0, 1))
     mesh_data[face_type].uvs.append(Vector2(1, 1))
     mesh_data[face_type].uvs.append(Vector2(1, 0))
     mesh_data[face_type].uvs.append(Vector2(0, 0))
     
-    
-    
-
-    
-    # Add the triangles to render_mesh_indices.
-    # NOTE: Like with the UV, the order is important!
-    # The indices tell the surface tool how to connect the vertices to make triangles.
+    # Add indices for the vertices
     var num_vertices = mesh_data[face_type].vertices.size()
     mesh_data[face_type].indices.append(num_vertices - 4)
     mesh_data[face_type].indices.append(num_vertices - 3)
@@ -176,15 +156,15 @@ func make_voxel_face(offsets, coords, normal, type):
     mesh_data[face_type].indices.append(num_vertices - 2)
     mesh_data[face_type].indices.append(num_vertices - 1)
     
-    # Add the collision triangles, but only if the voxel is solid.
-    # Like with the other two, the order is important!
+    # create a collision mesh for this face if it is solid
     if is_solid:
-        collision_mesh_indices.append(collision_mesh_vertices.size() - 4)
-        collision_mesh_indices.append(collision_mesh_vertices.size() - 3)
-        collision_mesh_indices.append(collision_mesh_vertices.size() - 1)
-        collision_mesh_indices.append(collision_mesh_vertices.size() - 3)
-        collision_mesh_indices.append(collision_mesh_vertices.size() - 2)
-        collision_mesh_indices.append(collision_mesh_vertices.size() - 1)
+        var num_collision_vertices = collision_mesh_vertices.size()
+        collision_mesh_indices.append(num_collision_vertices - 4)
+        collision_mesh_indices.append(num_collision_vertices - 3)
+        collision_mesh_indices.append(num_collision_vertices - 1)
+        collision_mesh_indices.append(num_collision_vertices - 3)
+        collision_mesh_indices.append(num_collision_vertices - 2)
+        collision_mesh_indices.append(num_collision_vertices - 1)
 
 
 func create_collision_mesh():
@@ -200,7 +180,7 @@ func create_collision_mesh():
         st.add_index(collision_mesh_indices[i]);
 
     # create a trimesh collision shape and set the CollisionShape 
-    collision_mesh = st.commit();
+    var collision_mesh = st.commit();
     collision_shape.shape = collision_mesh.create_trimesh_shape();
     
 

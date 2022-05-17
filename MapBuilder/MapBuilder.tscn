@@ -20,4 +20,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0017128, 0.00318837, 1.64509
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( -0.7171, 0.584805, -0.379171, 0.199932, 0.693766, 0.691893, 0.667678, 0.420348, -0.614421, 0, 25.5074, 0 )
-light_energy = 0.5
+light_energy = 0.658
+light_bake_mode = 2
+shadow_reverse_cull_face = true

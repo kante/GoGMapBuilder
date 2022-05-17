@@ -69,6 +69,6 @@ func on_map_click(coords, normal):
         TODO: should this stuff should go through input_ui or an extended/refactored ui class?
     """    
     var voxel = map.add_voxel(coords + normal, hud.voxel_type)
-
+    print("made a ", Voxel.properties[voxel].name)
 
 

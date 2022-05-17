@@ -47,8 +47,9 @@ func add_voxel(coords, type):
     """Add a voxel of the specified type at the supplied_coordinates
     """
     var chunk_index = (coords / chunk_size).floor()
+    var created_voxel = null
     if chunk_index in voxel_map:
-        return chunk_dict[chunk_index].add_voxel(coords, type)
+        created_voxel = chunk_dict[chunk_index].add_voxel(coords, type)
     else:
         var new_chunk = chunk_prototype.instance()
         var chunk_origin = chunk_size * chunk_index
@@ -56,7 +57,9 @@ func add_voxel(coords, type):
         chunk_nodes.add_child(new_chunk)
         new_chunk.initialize(self, chunk_origin, chunk_size) 
         chunk_dict[chunk_index] = new_chunk
-        new_chunk.add_voxel(coords, type)
+        created_voxel = new_chunk.add_voxel(coords, type)
             
     chunk_dict[chunk_index].update_mesh()
+    
+    return created_voxel
 

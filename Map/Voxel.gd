@@ -15,7 +15,8 @@ const UV_MAP_UNIT = UV_TILE_UNIT - 2.0*UV_TILE_MARGIN
 
 # All the voxel types we have implemented
 enum {GRASS, DIRT, COBBLE, STONE, BEDROCK}
-
+# All the possible faces for each voxel
+enum {GRASS_TOP_FACE, GRASS_SIDE_FACE, DIRT_FACE, COBBLE_FACE, STONE_FACE, BEDROCK_FACE}
 
 # offset vectors used to add vertices to voxel meshes in clockwise winding order
 #   dictionary keys are the normal direction facing away from the voxel surface
@@ -53,55 +54,55 @@ const properties = {
                                     "name" : "stone",
                                     "transparent":false,
                                     "solid":true,
-                                    Vector3.UP:Vector2(0, 0),
-                                    Vector3.DOWN:Vector2(0, 0),
-                                    Vector3.FORWARD:Vector2(0, 0),
-                                    Vector3.BACK:Vector2(0, 0),
-                                    Vector3.LEFT:Vector2(0, 0),
-                                    Vector3.RIGHT:Vector2(0, 0)
+                                    Vector3.UP:STONE_FACE,
+                                    Vector3.DOWN:STONE_FACE,
+                                    Vector3.FORWARD:STONE_FACE,
+                                    Vector3.BACK:STONE_FACE,
+                                    Vector3.LEFT:STONE_FACE,
+                                    Vector3.RIGHT:STONE_FACE
                                 },
                         BEDROCK : {
                                     "name" : "bedrock",
                                     "transparent":false,
                                     "solid":true,
-                                    Vector3.UP:Vector2(2, 0),
-                                    Vector3.DOWN:Vector2(2, 0),
-                                    Vector3.FORWARD:Vector2(2, 0),
-                                    Vector3.BACK:Vector2(2, 0),
-                                    Vector3.LEFT:Vector2(2, 0),
-                                    Vector3.RIGHT:Vector2(2, 0)
+                                    Vector3.UP:BEDROCK_FACE,
+                                    Vector3.DOWN:BEDROCK_FACE,
+                                    Vector3.FORWARD:BEDROCK_FACE,
+                                    Vector3.BACK:BEDROCK_FACE,
+                                    Vector3.LEFT:BEDROCK_FACE,
+                                    Vector3.RIGHT:BEDROCK_FACE
                                 },
                         COBBLE : {
                                     "name" : "cobble",
                                     "transparent":false,
                                     "solid":true,
-                                    Vector3.UP:Vector2(1, 0),
-                                    Vector3.DOWN:Vector2(1, 0),
-                                    Vector3.FORWARD:Vector2(1, 0),
-                                    Vector3.BACK:Vector2(1, 0),
-                                    Vector3.LEFT:Vector2(1, 0),
-                                    Vector3.RIGHT:Vector2(1, 0)
+                                    Vector3.UP:COBBLE_FACE,
+                                    Vector3.DOWN:COBBLE_FACE,
+                                    Vector3.FORWARD:COBBLE_FACE,
+                                    Vector3.BACK:COBBLE_FACE,
+                                    Vector3.LEFT:COBBLE_FACE,
+                                    Vector3.RIGHT:COBBLE_FACE
                                 },
                         DIRT : {
                                     "name" : "dirt",
                                     "transparent":false,
                                     "solid":true,
-                                    Vector3.UP:Vector2(0, 1),
-                                    Vector3.DOWN:Vector2(0, 1),
-                                    Vector3.FORWARD:Vector2(0, 1),
-                                    Vector3.BACK:Vector2(0, 1),
-                                    Vector3.LEFT:Vector2(0, 1),
-                                    Vector3.RIGHT:Vector2(0, 1)
+                                    Vector3.UP:DIRT_FACE,
+                                    Vector3.DOWN:DIRT_FACE,
+                                    Vector3.FORWARD:DIRT_FACE,
+                                    Vector3.BACK:DIRT_FACE,
+                                    Vector3.LEFT:DIRT_FACE,
+                                    Vector3.RIGHT:DIRT_FACE
                                 },
                         GRASS : {
                                     "name" : "grass",
                                     "transparent":false,
                                     "solid":true,
-                                    Vector3.UP:Vector2(2, 1),
-                                    Vector3.DOWN:Vector2(0, 1),
-                                    Vector3.FORWARD:Vector2(1, 1),
-                                    Vector3.BACK:Vector2(1, 1),
-                                    Vector3.LEFT:Vector2(1, 1),
-                                    Vector3.RIGHT:Vector2(1, 1)
+                                    Vector3.UP:GRASS_TOP_FACE,
+                                    Vector3.DOWN:DIRT_FACE,
+                                    Vector3.FORWARD:GRASS_SIDE_FACE,
+                                    Vector3.BACK:GRASS_SIDE_FACE,
+                                    Vector3.LEFT:GRASS_SIDE_FACE,
+                                    Vector3.RIGHT:GRASS_SIDE_FACE
                                 },
                     }

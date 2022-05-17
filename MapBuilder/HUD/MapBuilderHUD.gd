@@ -16,8 +16,7 @@ func _ready():
     
         button_container.add_child(new_button)
         
-        var atlas_rect = Rect2(properties[Vector3.UP]*Voxel.TILE_SIZE, Vector2.ONE*Voxel.TILE_SIZE)    
-        new_button.set_texture(atlas_rect, properties.name)
+        new_button.set_texture(type, properties.name)
 
         
         if type == voxel_type:

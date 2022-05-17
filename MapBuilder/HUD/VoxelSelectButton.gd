@@ -4,13 +4,24 @@ extends TextureButton
 # initialized in the MapBuilderHUD
 var hud = null
 var voxel_type = null
-onready var atlas_texture = $TextureRect.texture
+onready var texture_rect = $TextureRect
 onready var label = $Label
 
 
-func set_texture(new_rect, texture_name):
+func set_texture(face_type, texture_name):
     """Sets the texture, yo."""
-    atlas_texture.region = new_rect
+    match face_type:
+        Voxel.BEDROCK:
+            texture_rect.texture = load("res://Map/assets/bedrock.png")
+        Voxel.COBBLE:
+            texture_rect.texture = load("res://Map/assets/cobble.png")
+        Voxel.STONE:
+            texture_rect.texture = load("res://Map/assets/stone.png")
+        Voxel.DIRT:
+            texture_rect.texture = load("res://Map/assets/dirt.png")
+        Voxel.GRASS:
+            texture_rect.texture = load("res://Map/assets/grass_top.png")
+        
     label.text = texture_name
     
 
